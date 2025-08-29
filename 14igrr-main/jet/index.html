@@ -1,43 +1,192 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Prosto+One&amp;display=swap" rel="stylesheet">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky jet</title>
-    <link rel="stylesheet" href="index.css">
+  <meta charset="UTF-8">
+  <title>Lucky Jet DEMO</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'SF Pro Display', sans-serif;
+      background: url("https://i.ibb.co/xqPZQrz/bg.jpg") no-repeat center top / cover;
+      color: white;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: center;
+      padding-top: 50px;
+    }
+
+    .text1 {
+      font-size: 60px;
+      font-weight: bold;
+    }
+
+    .betting {
+      font-size: 32px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #ffc300;
+    }
+
+    .fly {
+      font-size: 22px;
+      margin-top: 8px;
+    }
+
+    /* Ракета и контейнер */
+    .rocket-container {
+      position: relative;
+      margin-top: 60px;
+      width: 300px;
+      height: 200px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .rocket {
+      width: 80px;
+      display: none;
+      z-index: 3;
+    }
+
+    .rocket_fire {
+      position: absolute;
+      width: 40px;
+      bottom: 0;
+      display: none;
+      z-index: 2;
+    }
+
+    .cloud {
+      position: absolute;
+      width: 180px;
+      bottom: 30px;
+      opacity: 0.8;
+      animation: cloudsMove 12s linear infinite;
+      z-index: 1;
+    }
+
+    .cloud2 {
+      left: -200px;
+      animation-delay: 6s;
+    }
+
+    /* Кнопка */
+    .button-demo {
+      margin-top: 50px;
+      padding: 20px 50px;
+      font-size: 28px;
+      border: none;
+      border-radius: 25px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(263.87deg, rgb(148, 78, 245) 0%, rgb(92, 36, 252) 100%);
+      box-shadow: rgba(148, 78, 245, 0.6) 0px -8px 8px inset, rgba(0,0,0,0.4) 0px 4px 10px;
+      transition: transform 0.2s;
+    }
+
+    .button-demo:hover {
+      transform: scale(1.05);
+    }
+
+    /* Анимации */
+    @keyframes rocketFly {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-180px); }
+    }
+
+    @keyframes fire {
+      0% { transform: scaleY(1); opacity: 1; }
+      100% { transform: scaleY(0.7); opacity: 0.6; }
+    }
+
+    @keyframes cloudsMove {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-200%); }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .text1 { font-size: 40px; }
+      .betting { font-size: 24px; }
+      .fly { font-size: 18px; }
+      .rocket-container { width: 200px; height: 150px; }
+    }
+
+    @media (max-width: 480px) {
+      .text1 { font-size: 28px; }
+      .betting { font-size: 20px; }
+      .fly { font-size: 14px; }
+      .button-demo { font-size: 20px; padding: 15px 30px; }
+    }
+  </style>
 </head>
-<body class="page">
-    <div class="cv">
-        <img id="ob1" class="obloko" src="images/obl.svg">
-        <img id="ob2" class="obloko2" src="images/obl.svg">
+<body>
+  <div class="page">
+    <h1 class="text1">Lucky Jet DEMO</h1>
+    <h2 class="betting">Демо-сигналы</h2>
+    <p class="fly">Попробуй бесплатно 🚀</p>
+
+    <div class="rocket-container">
+      <img src="https://i.ibb.co/DYhD7yx/rocket.png" class="rocket" id="rocket" />
+      <img src="https://i.ibb.co/X5BfGYf/fire.png" class="rocket_fire" id="fire" />
+      <img src="https://i.ibb.co/nj6JxZp/cloud.png" class="cloud" />
+      <img src="https://i.ibb.co/nj6JxZp/cloud.png" class="cloud cloud2" />
     </div>
 
-    <div class="winner">
-        <img class="luck" src="images/Lucky.svg">
-        <img class="win" src="images/1win_logo.png">
+    <div id="signal-box" class="fly" style="margin-top:20px; font-size:24px;">
+      Ожидание сигнала...
     </div>
 
-    <div class="rocket">
-        <div class="loader2"></div>
-        <div class="visible">
-            <iframe id="myIframe" src="https://100hp.app/lucky/onewin/" onload="hideElements()" scrolling="no"></iframe>
-        </div>
+    <button class="button-demo" id="startBtn">🚀 Старт ДЕМО</button>
+  </div>
 
-        <div class="tab">
-            <button class="tablinks games-icon" data-tab="Games" onclick="window.location.href=&#39;https://14igrr.vercel.app/&#39;;">
-                <img src="images/back.png" alt="Игры">
-            </button>
-        </div>
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const signalBox = document.getElementById("signal-box");
+    const rocket = document.getElementById("rocket");
+    const fire = document.getElementById("fire");
 
-        <div id="responseText" class="text"></div>
+    startBtn.addEventListener("click", () => {
+        // Генерация случайного коэффициента
+        const coef = (Math.random() * 5 + 1).toFixed(2); // x1.00 - x6.00
+        signalBox.textContent = `Сигнал: x${coef}`;
 
-        <script src="script1.js"></script>
-    </div>
+        // Показ ракеты и огня
+        rocket.style.display = "block";
+        fire.style.display = "block";
 
-    <div id="result" class="rand"></div>
+        // Запуск анимации
+        rocket.style.animation = "rocketFly 4s forwards";
+        fire.style.animation = "fire 0.6s infinite alternate";
+
+        // Отключаем кнопку
+        startBtn.disabled = true;
+        startBtn.textContent = "⏳ Полёт...";
+
+        // Через случайное время ракета "взрывается"
+        const flyTime = Math.random() * 2000 + 4000;
+        setTimeout(() => {
+            rocket.style.display = "none";
+            fire.style.display = "none";
+            rocket.style.animation = "";
+            fire.style.animation = "";
+
+            startBtn.disabled = false;
+            startBtn.textContent = "🚀 Старт ДЕМО";
+            signalBox.textContent = `Ракета взорвалась на x${coef}`;
+        }, flyTime);
+    });
+  </script>
 </body>
-<div class="troywell-avia"></div>
-<div class="troywell-caa"></div>
 </html>
